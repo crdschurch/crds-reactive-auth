@@ -1,0 +1,29 @@
+{
+  "name": "crds-reactive-auth",
+  "version": "0.0.1",
+  "description": "Library for watching crossroads authentication token",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "webpack --progress --colors",
+    "start": "webpack --progress --colors --watch",
+    "test": "echo \"No tests specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crdschurch/crds-reactive-auth.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/crdschurch/crds-reactive-auth/issues"
+  },
+  "homepage": "https://github.com/crdschurch/crds-reactive-auth#readme",
+  "devDependencies": {
+    "babel-core": "^4.7.16",
+    "babel-loader": "^4.3.0",
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "webpack": "^1.14.0"
+  }
+}
