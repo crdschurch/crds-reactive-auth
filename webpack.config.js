@@ -1,6 +1,3 @@
-/* eslint-disable no-var */
-
-var path = require('path');
 
 module.exports = {
   context: __dirname,
@@ -17,7 +14,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel'
+        loader: 'babel-loader'
       }
     ]
   }
