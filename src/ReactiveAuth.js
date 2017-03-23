@@ -9,6 +9,7 @@ class ReactiveAuth {
    * @param {string} name - the name of the auth cookie that should be watched.
    * @param {Function} defaultHandler - A default callback for the event
    *     listeners. @default console.log
+   * @returns
    */
   constructor(name, defaultHandler) {
     // If name is falsy then set the cookieName to an empty string
@@ -83,10 +84,12 @@ class ReactiveAuth {
   /**
    * Unsubscribes the client from the events that this class dispatches
    *     and stops the interval that was running.
+   *
+   * @returns
    */
   unsubscribe() {
     clearInterval(this.watchAuthCookie);
-    this.watchAuthCookie = undefined;
+    this.watchAuthCookie = null;
 
     window.removeEventListener('updateAuth');
     window.removeEventListener('expireAuth');
@@ -100,8 +103,10 @@ class ReactiveAuth {
    *     when the `updateAuth` event is dispatched.
    * @param {Function} expireCb - a specific function that should be called
    *     when the `expireAuth` event is dispatched.
+   * @returns
    */
   createEventListeners(updateCb, expireCb) {
+    console.log(this);
     if (updateCb && typeof updateCb === 'function') { this.updateHandler = updateCb; }
     if (expireCb && typeof expireCb === 'function') { this.expireHandler = expireCb; }
 

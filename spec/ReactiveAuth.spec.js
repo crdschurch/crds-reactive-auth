@@ -62,28 +62,78 @@ describe('ReactiveAuth', () => {
   });
 
   describe('#subscribe', () => {
-    it('Should work properly with no parameters passed in', () => {
+    let ra;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+    });
+
+    it('Should work properly with no params passed in', () => {
+      expect(ra.cookieVal).toBe(undefined);
+    });
+
+    it('Should accept and use valid params', () => {
 
     });
 
-    it('Should take a frequency', () => {
+    it('Should revert to default params when given invalid params', () => {
+
+    });
+
+    it('Should call #createEventListeners class method', () => {
+
+    });
+
+    it('Should create and return an interval object', () => {
 
     });
 
     it('Should take custom callbacks for update and expire events', () => {
 
     });
+  });
 
-    it('Should create the event listeners', () => {
+  describe('#unsubscribe', () => {
+    let ra;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+    });
+
+    it('Should stop watching the auth cookie and reset the watchAuthCookie variable', () => {
+
+    });
+
+    it('Should remove the event listeners from the window object', () => {
 
     });
   });
 
-  describe('#unsubscribe', () => {
-
-  });
-
   describe('#createEventListeners', () => {
+    let ra;
 
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+    });
+
+    it('Should accept and use valid params', () => {
+
+    });
+
+    it('Should add event listeners to the window object', () => {
+
+    });
   });
 });
