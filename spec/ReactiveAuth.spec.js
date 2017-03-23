@@ -59,6 +59,14 @@ describe('ReactiveAuth', () => {
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
+
+    it('Should call the getCookie method', () => {
+      const ra = new ReactiveAuth();
+
+      spyOn(ra, 'getCookie');
+
+      expect(ra.getCookie).toHaveBeenCalled();
+    });
   });
 
   describe('#subscribe', () => {
@@ -84,8 +92,17 @@ describe('ReactiveAuth', () => {
 
     });
 
-    it('Should call #createEventListeners class method', () => {
+    it('Should call #createEventListeners class method with the correct params', () => {
+      const tfreq = 1000;
+      const tfunc1 = () => { };
+      const tfunc2 = () => { };
 
+      spyOn(ra, 'createEventListeners');
+
+      ra.subscribe(tfreq, tfunc1, tfunc2);
+
+      expect(ra.createEventListeners).toHaveBeenCalled();
+      expect(ra.createEventListeners).toHaveBeenCalledWith(tfunc1, tfunc2);
     });
 
     it('Should create and return an interval object', () => {
@@ -133,6 +150,28 @@ describe('ReactiveAuth', () => {
     });
 
     it('Should add event listeners to the window object', () => {
+
+    });
+  });
+
+  describe('Dispatching Events', () => {
+    let ra;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+    });
+
+    describe('updateAuth Event', () => {
+      it('Should not dispatch if the auth cookie isn\'t initially found', () => {
+
+      });
+    });
+
+    describe('expireAuth Event', () => {
 
     });
   });
