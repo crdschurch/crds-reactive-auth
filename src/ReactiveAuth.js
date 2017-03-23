@@ -12,10 +12,11 @@ class ReactiveAuth {
    */
   constructor(name, defaultHandler) {
     // If name is falsy then set the cookieName to an empty string
-    const cookieName = `${name || 'sessionId'}`;
+    // FIXME: should defualt values be hard coded here...?
+    const cookieName = name && typeof name === 'string' ? name : 'sessionId';
 
     // This regex extracts the value of the cookie `cookieName`
-    this.cookieValRe = new RegExp(`(?:(?:^|.*;\\s*)${cookieName}\\s*\\=\\s*([^;]*).*$)|^.*$`, '');
+    this.cookieValRe = new RegExp(`(?:(?:^|.*;\\s*)${cookieName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
     this.cookieVal = undefined;
     this.watchAuthCookie = undefined;
 

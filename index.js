@@ -94,10 +94,11 @@ var ReactiveAuth = (function () {
     _classCallCheck(this, ReactiveAuth);
 
     // If name is falsy then set the cookieName to an empty string
-    var cookieName = "" + (name || "sessionId");
+    // FIXME: should defualt values be hard coded here...?
+    var cookieName = name && typeof name === "string" ? name : "sessionId";
 
     // This regex extracts the value of the cookie `cookieName`
-    this.cookieValRe = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*\\=\\s*([^;]*).*$)|^.*$", "");
+    this.cookieValRe = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*=\\s*([^;]*).*$)|^.*$", "");
     this.cookieVal = undefined;
     this.watchAuthCookie = undefined;
 

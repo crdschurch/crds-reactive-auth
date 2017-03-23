@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "webpack --progress --colors --watch",
-    "test": "echo \"No tests specified\" && exit 1"
+    "test": "./node_modules/karma/bin/karma start tests.conf.js"
   },
   "repository": {
     "type": "git",
