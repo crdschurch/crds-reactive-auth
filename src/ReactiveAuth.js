@@ -31,6 +31,7 @@ class ReactiveAuth {
   /**
    * Subscribes the client to events that are dispatched by this class.
    *
+   * @method
    * @param {number} freq - the frequency in which changes should be looked for.
    *     @default 3000 (milliseconds)
    * @param {Function} updateCallback - a specific function that should be called
@@ -47,7 +48,7 @@ class ReactiveAuth {
     const frequency = freq > 0 ? freq : 3000;
 
     this.watchAuthCookie = setInterval(() => {
-      const browserCookieVal = document.cookie.replace(this.cookieValRe, '$1');
+      const browserCookieVal = document.cookie.replace(this.cookieValRe, '$1') || undefined;
 
       if (!browserCookieVal && this.cookieVal) {
         // The cookie expired
@@ -85,6 +86,7 @@ class ReactiveAuth {
    * Unsubscribes the client from the events that this class dispatches
    *     and stops the interval that was running.
    *
+   * @method
    * @returns
    */
   unsubscribe() {
@@ -98,6 +100,8 @@ class ReactiveAuth {
   /**
    * Creates the event listeners for the `updateAuth` and `expireAuth` events
    *     and attaches them to the DOM.
+   *
+   * @method
    * @private
    * @param {Function} updateCb - a specific function that should be called
    *     when the `updateAuth` event is dispatched.
@@ -106,12 +110,28 @@ class ReactiveAuth {
    * @returns
    */
   createEventListeners(updateCb, expireCb) {
-    console.log(this);
     if (updateCb && typeof updateCb === 'function') { this.updateHandler = updateCb; }
     if (expireCb && typeof expireCb === 'function') { this.expireHandler = expireCb; }
 
     window.addEventListener('updateAuth', this.updateHandler, false);
     window.addEventListener('expireAuth', this.expireHandler, false);
+  }
+
+  // TODO
+  getCookie(param) {
+    return 'something';
+  }
+
+  isCookieValid() {
+
+  }
+
+  register() {
+
+  }
+
+  unregister() {
+
   }
 }
 
