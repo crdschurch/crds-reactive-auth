@@ -10,11 +10,15 @@ module.exports = {
     libraryTarget: 'commonjs2'
   },
 
+  resolve: {
+    extensions: ['.js', '.ts']
+  },
+
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.js$/,
-        loader: 'babel-loader'
+        test: /\.ts$/,
+        use: 'ts-loader'
       }
     ]
   }

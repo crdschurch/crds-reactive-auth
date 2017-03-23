@@ -5,12 +5,13 @@
     "comma-dangle": 0,
     "max-len": 0,
     "eol-last": 0,
-    "linebreak-style": 0
+    "linebreak-style": 0,
+    "no-useless-constructor": 0
   },
   "env": {
     "node": true,
     "es6": true,
-    "jasmine": true
+    "browser": true
   },
   "parserOptions": {
     "sourceType": "module"

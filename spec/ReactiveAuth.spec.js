@@ -6,7 +6,7 @@ describe('ReactiveAuth', () => {
     const dName = 'sessionId';
     const dValRe = new RegExp(`(?:(?:^|.*;\\s*)${dName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
     const dCookieVal = undefined;
-    const dWatchAuthCookie = undefined;
+    const dWatchCookie = undefined;
     // eslint-disable-next-line no-console
     const dHandler = console.log;
 
@@ -15,7 +15,7 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(dValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchAuthCookie).toBe(dWatchAuthCookie);
+      expect(ra.watchCookie).toBe(dWatchCookie);
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
@@ -28,7 +28,7 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(tValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchAuthCookie).toBe(dWatchAuthCookie);
+      expect(ra.watchCookie).toBe(dWatchCookie);
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
@@ -42,25 +42,25 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(tValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchAuthCookie).toBe(dWatchAuthCookie);
+      expect(ra.watchCookie).toBe(dWatchCookie);
       expect(ra.updateHandler).toBe(tHandler);
       expect(ra.expireHandler).toBe(tHandler);
     });
 
     it('Should use default values when provided incorrect parameter types', () => {
-      const tName = 4;
+      const tName = {};
       const tHandler = 'string';
 
       const ra = new ReactiveAuth(tName, tHandler);
 
       expect(ra.cookieValRe.toString()).toBe(dValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchAuthCookie).toBe(dWatchAuthCookie);
+      expect(ra.watchCookie).toBe(dWatchCookie);
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
 
-    it('Should call the getCookie method', () => {
+    xit('Should call the getCookie method', () => {
       const ra = new ReactiveAuth();
 
       spyOn(ra, 'getCookie');
@@ -84,11 +84,11 @@ describe('ReactiveAuth', () => {
       expect(ra.cookieVal).toBe(undefined);
     });
 
-    it('Should accept and use valid params', () => {
+    xit('Should accept and use valid params', () => {
 
     });
 
-    it('Should revert to default params when given invalid params', () => {
+    xit('Should revert to default params when given invalid params', () => {
 
     });
 
@@ -105,16 +105,16 @@ describe('ReactiveAuth', () => {
       expect(ra.createEventListeners).toHaveBeenCalledWith(tfunc1, tfunc2);
     });
 
-    it('Should create and return an interval object', () => {
+    xit('Should create and return an interval object', () => {
 
     });
 
-    it('Should take custom callbacks for update and expire events', () => {
+    xit('Should take custom callbacks for update and expire events', () => {
 
     });
   });
 
-  describe('#unsubscribe', () => {
+  xdescribe('#unsubscribe', () => {
     let ra;
 
     beforeEach(() => {
@@ -125,7 +125,7 @@ describe('ReactiveAuth', () => {
       ra = undefined;
     });
 
-    it('Should stop watching the auth cookie and reset the watchAuthCookie variable', () => {
+    it('Should stop watching the auth cookie and reset the watchCookie variable', () => {
 
     });
 
@@ -134,7 +134,7 @@ describe('ReactiveAuth', () => {
     });
   });
 
-  describe('#createEventListeners', () => {
+  xdescribe('#createEventListeners', () => {
     let ra;
 
     beforeEach(() => {
@@ -154,7 +154,7 @@ describe('ReactiveAuth', () => {
     });
   });
 
-  describe('Dispatching Events', () => {
+  xdescribe('Dispatching Events', () => {
     let ra;
 
     beforeEach(() => {

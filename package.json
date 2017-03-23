@@ -29,8 +29,12 @@
     "karma-jasmine": "^1.1.0",
     "karma-mocha-reporter": "^2.2.3",
     "karma-phantomjs-launcher": "^1.0.4",
+    "karma-typescript": "^2.1.7",
     "karma-webpack": "^2.0.3",
     "phantomjs": "^2.1.7",
+    "ts-loader": "^2.0.3",
+    "tslint-config-unional": "^0.7.0",
+    "typescript": "^2.2.1",
     "webpack": "^2.3.1"
   }
 }
