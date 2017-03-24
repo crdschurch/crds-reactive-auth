@@ -105,6 +105,37 @@ describe('ReactiveAuth', () => {
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), tFreq);
       expect(ra.watchCookie).toEqual(tInterval);
     });
+
+    describe('Dispatching Events', () => {
+      const dName = 'sessionId';
+      const dValRe = new RegExp(`(?:(?:^|.*;\\s*)${dName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
+
+      let ra;
+
+      beforeEach(() => {
+        jasmine.clock().install();
+        ra = new ReactiveAuth();
+      });
+
+      afterEach(() => {
+        jasmine.clock().uninstall();
+        ra = undefined;
+      });
+
+      xdescribe('updateAuth Event', () => {
+        it('Should not dispatch if the auth cookie isn\'t initially found', () => {
+          spyOn(window, 'dispatchEvent');
+
+          ra.subscribe();
+
+          fail();
+        });
+      });
+
+      xdescribe('expireAuth Event', () => {
+
+      });
+    });
   });
 
   describe('#unsubscribe', () => {
@@ -181,28 +212,6 @@ describe('ReactiveAuth', () => {
       expect(addEventListener.calls.count()).toEqual(2);
       expect(addEventListener.calls.argsFor(0)).toEqual(['updateAuth', tUpdateCb, false]);
       expect(addEventListener.calls.argsFor(1)).toEqual(['expireAuth', tExpireCb, false]);
-    });
-  });
-
-  xdescribe('Dispatching Events', () => {
-    let ra;
-
-    beforeEach(() => {
-      ra = new ReactiveAuth();
-    });
-
-    afterEach(() => {
-      ra = undefined;
-    });
-
-    describe('updateAuth Event', () => {
-      it('Should not dispatch if the auth cookie isn\'t initially found', () => {
-
-      });
-    });
-
-    describe('expireAuth Event', () => {
-
     });
   });
 });
