@@ -36,7 +36,7 @@ describe('ReactiveAuth', () => {
     it('Should construct a new ReactiveAuth instance with a name and default handler', () => {
       const tName = 'localsessionId';
       const tValRe = new RegExp(`(?:(?:^|.*;\\s*)${tName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
-      function tHandler() {}
+      const tHandler = () => { };
 
       const ra = new ReactiveAuth(tName, tHandler);
 
@@ -45,19 +45,6 @@ describe('ReactiveAuth', () => {
       expect(ra.watchCookie).toBe(dWatchCookie);
       expect(ra.updateHandler).toBe(tHandler);
       expect(ra.expireHandler).toBe(tHandler);
-    });
-
-    it('Should use default values when provided incorrect parameter types', () => {
-      const tName = {};
-      const tHandler = 'string';
-
-      const ra = new ReactiveAuth(tName, tHandler);
-
-      expect(ra.cookieValRe.toString()).toBe(dValRe.toString());
-      expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchCookie).toBe(dWatchCookie);
-      expect(ra.updateHandler).toBe(dHandler);
-      expect(ra.expireHandler).toBe(dHandler);
     });
 
     xit('Should call the getCookie method', () => {
@@ -70,6 +57,10 @@ describe('ReactiveAuth', () => {
   });
 
   describe('#subscribe', () => {
+    const dFreq = 3000;
+    const dUpdateCb = undefined;
+    const dExpireCb = undefined;
+
     let ra;
 
     beforeEach(() => {
@@ -81,76 +72,115 @@ describe('ReactiveAuth', () => {
     });
 
     it('Should work properly with no params passed in', () => {
-      expect(ra.cookieVal).toBe(undefined);
-    });
-
-    xit('Should accept and use valid params', () => {
-
-    });
-
-    xit('Should revert to default params when given invalid params', () => {
-
-    });
-
-    it('Should call #createEventListeners class method with the correct params', () => {
-      const tfreq = 1000;
-      const tfunc1 = () => { };
-      const tfunc2 = () => { };
+      const tInterval = setInterval(() => { }, 1000);
 
       spyOn(ra, 'createEventListeners');
+      spyOn(window, 'setInterval').and.returnValue(tInterval);
 
-      ra.subscribe(tfreq, tfunc1, tfunc2);
+      ra.subscribe();
 
       expect(ra.createEventListeners).toHaveBeenCalled();
-      expect(ra.createEventListeners).toHaveBeenCalledWith(tfunc1, tfunc2);
-    });
-
-    xit('Should create and return an interval object', () => {
-
-    });
-
-    xit('Should take custom callbacks for update and expire events', () => {
-
-    });
-  });
-
-  xdescribe('#unsubscribe', () => {
-    let ra;
-
-    beforeEach(() => {
-      ra = new ReactiveAuth();
-    });
-
-    afterEach(() => {
-      ra = undefined;
-    });
-
-    it('Should stop watching the auth cookie and reset the watchCookie variable', () => {
-
-    });
-
-    it('Should remove the event listeners from the window object', () => {
-
-    });
-  });
-
-  xdescribe('#createEventListeners', () => {
-    let ra;
-
-    beforeEach(() => {
-      ra = new ReactiveAuth();
-    });
-
-    afterEach(() => {
-      ra = undefined;
+      expect(ra.createEventListeners).toHaveBeenCalledWith(dUpdateCb, dExpireCb);
+      // TODO: test the interval functionality separately
+      /*expect(ra.cookieVal).toBe(undefined);*/
+      expect(setInterval).toHaveBeenCalled();
+      expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), dFreq);
+      expect(ra.watchCookie).toEqual(tInterval);
     });
 
     it('Should accept and use valid params', () => {
+      const tFreq = 1000;
+      const tUpdateCb = () => { };
+      const tExpireCb = () => { };
+      const tInterval = setInterval(() => { }, tFreq);
 
+      spyOn(ra, 'createEventListeners');
+      spyOn(window, 'setInterval').and.returnValue(tInterval);
+
+      ra.subscribe(tFreq, tUpdateCb, tExpireCb);
+
+      expect(ra.createEventListeners).toHaveBeenCalled();
+      expect(ra.createEventListeners).toHaveBeenCalledWith(tUpdateCb, tExpireCb);
+      expect(setInterval).toHaveBeenCalled();
+      expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), tFreq);
+      expect(ra.watchCookie).toEqual(tInterval);
+    });
+  });
+
+  describe('#unsubscribe', () => {
+    let ra;
+    let dWatchCookie;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+      dWatchCookie = setInterval(() => { }, 3000);
+      ra.watchCookie = dWatchCookie;
     });
 
-    it('Should add event listeners to the window object', () => {
+    afterEach(() => {
+      ra = undefined;
+      clearInterval(dWatchCookie);
+      dWatchCookie = undefined;
+    });
 
+    it('Should stop watching the auth cookie and reset the watchCookie variable', () => {
+      spyOn(window, 'clearInterval').and.callThrough();
+
+      ra.unsubscribe();
+
+      expect(clearInterval).toHaveBeenCalled();
+      expect(clearInterval).toHaveBeenCalledWith(dWatchCookie);
+      expect(ra.watchCookie).toEqual(null);
+    });
+
+    it('Should remove the event listeners from the window object', () => {
+      spyOn(window, 'removeEventListener');
+
+      ra.unsubscribe();
+
+      expect(removeEventListener.calls.count()).toEqual(2);
+      expect(removeEventListener.calls.argsFor(0)).toEqual(['updateAuth']);
+      expect(removeEventListener.calls.argsFor(1)).toEqual(['expireAuth']);
+    });
+  });
+
+  describe('#createEventListeners', () => {
+    const dUpdateCb = () => { };
+    const dExpireCb = () => { };
+
+    let ra;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+      ra.updateHandler = dUpdateCb;
+      ra.expireHandler = dExpireCb;
+    });
+
+    afterEach(() => {
+      ra = undefined;
+    });
+
+    it('Should work properly when passed no params', () => {
+      spyOn(window, 'addEventListener');
+
+      ra.createEventListeners();
+
+      expect(addEventListener.calls.count()).toEqual(2);
+      expect(addEventListener.calls.argsFor(0)).toEqual(['updateAuth', dUpdateCb, false]);
+      expect(addEventListener.calls.argsFor(1)).toEqual(['expireAuth', dExpireCb, false]);
+    });
+
+    it('Should accept and use valid params', () => {
+      const tUpdateCb = () => { };
+      const tExpireCb = () => { };
+
+      spyOn(window, 'addEventListener');
+
+      ra.createEventListeners(tUpdateCb, tExpireCb);
+
+      expect(addEventListener.calls.count()).toEqual(2);
+      expect(addEventListener.calls.argsFor(0)).toEqual(['updateAuth', tUpdateCb, false]);
+      expect(addEventListener.calls.argsFor(1)).toEqual(['expireAuth', tExpireCb, false]);
     });
   });
 

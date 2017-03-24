@@ -11,7 +11,9 @@
   "env": {
     "node": true,
     "es6": true,
-    "browser": true
+    "browser": true,
+    "mocha": true,
+    "jasmine": true
   },
   "parserOptions": {
     "sourceType": "module"

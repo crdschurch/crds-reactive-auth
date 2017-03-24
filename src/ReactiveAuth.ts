@@ -15,7 +15,7 @@ class ReactiveAuth {
    * @param   {string}  name            the name of the auth cookie that should be watched.
    * @param   {anyFunc} defaultHandler  A default callback for the event listeners.
    */
-  constructor(name: String = 'sessionId', defaultHandler: anyFunc = console.log) {
+  constructor(name: string = 'sessionId', defaultHandler: anyFunc = console.log) {
     this.cookieValRe = new RegExp(`(?:(?:^|.*;\\s*)${name}\\s*=\\s*([^;]*).*$)|^.*$`, '');
     this.updateHandler = defaultHandler;
     this.expireHandler = defaultHandler;

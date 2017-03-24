@@ -1,6 +1,6 @@
 var karmaWebpackPlugin = require('karma-webpack');
 var karmaJasminePlugin = require('karma-jasmine');
-var karmaTypescripePlugin = require('karma-typescript');
+var karmaTypescriptPlugin = require('karma-typescript');
 var karmaPhantomJSLauncher = require('karma-phantomjs-launcher');
 var karmaMochaReporter = require('karma-mocha-reporter');
 
@@ -11,11 +11,12 @@ module.exports = function testsConfig(config) {
     frameworks: ['jasmine', 'karma-typescript'],
 
     files: [
-      'spec/spec_index.js'
+      './spec/spec_index.js'
     ],
 
     preprocessors: {
-      'spec/spec_index.js': ['webpack', 'karma-typescript']
+      './spec/spec_index.js': ['webpack'],
+      //'./spec/**/*.spec.ts': ['karma-typescript']
     },
 
     reporters: [
@@ -40,7 +41,7 @@ module.exports = function testsConfig(config) {
           },
           {
             test: /\.ts$/,
-            use: 'ts-loader'
+            use: 'awesome-typescript-loader'
           }
         ]
       }
@@ -52,9 +53,15 @@ module.exports = function testsConfig(config) {
       }
     },
 
+    karmaTypescriptConfig: {
+      tsconfig: './tsconfig.json',
+      include: ['**/*.ts'],
+      exclude: ['node_modules']
+    },
+
     colors: true,
 
-    // logLevel: config.LOG_INFO
+    logLevel: config.LOG_INFO,
 
     autoWatch: true,
 
@@ -67,7 +74,7 @@ module.exports = function testsConfig(config) {
     plugins: [
       karmaWebpackPlugin,
       karmaJasminePlugin,
-      karmaTypescripePlugin,
+      karmaTypescriptPlugin,
       karmaPhantomJSLauncher,
       karmaMochaReporter
     ]
