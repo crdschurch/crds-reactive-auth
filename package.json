@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "webpack --progress --colors",
-    "start": "webpack --progress --colors --watch",
+    "start": "karma start --single-run false",
     "test": "karma start"
   },
   "repository": {

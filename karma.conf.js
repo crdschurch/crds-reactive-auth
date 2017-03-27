@@ -68,7 +68,7 @@ module.exports = function testsConfig(config) {
       'PhantomJS'
     ],
 
-    singleRun: false,
+    singleRun: true,
 
     plugins: [
       karmaWebpackPlugin,
