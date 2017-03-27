@@ -82,7 +82,7 @@ describe('ReactiveAuth', () => {
       expect(ra.createEventListeners).toHaveBeenCalled();
       expect(ra.createEventListeners).toHaveBeenCalledWith(dUpdateCb, dExpireCb);
       // TODO: test the interval functionality separately
-      /*expect(ra.cookieVal).toBe(undefined);*/
+      /* expect(ra.cookieVal).toBe(undefined); */
       expect(setInterval).toHaveBeenCalled();
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), dFreq);
       expect(ra.watchCookie).toEqual(tInterval);
@@ -106,7 +106,7 @@ describe('ReactiveAuth', () => {
       expect(ra.watchCookie).toEqual(tInterval);
     });
 
-    describe('Dispatching Events', () => {
+    xdescribe('Dispatching Events', () => {
       const dName = 'sessionId';
       const dValRe = new RegExp(`(?:(?:^|.*;\\s*)${dName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
 
@@ -122,7 +122,7 @@ describe('ReactiveAuth', () => {
         ra = undefined;
       });
 
-      xdescribe('updateAuth Event', () => {
+      describe('updateAuth Event', () => {
         it('Should not dispatch if the auth cookie isn\'t initially found', () => {
           spyOn(window, 'dispatchEvent');
 
@@ -132,7 +132,7 @@ describe('ReactiveAuth', () => {
         });
       });
 
-      xdescribe('expireAuth Event', () => {
+      describe('expireAuth Event', () => {
 
       });
     });
@@ -212,6 +212,24 @@ describe('ReactiveAuth', () => {
       expect(addEventListener.calls.count()).toEqual(2);
       expect(addEventListener.calls.argsFor(0)).toEqual(['updateAuth', tUpdateCb, false]);
       expect(addEventListener.calls.argsFor(1)).toEqual(['expireAuth', tExpireCb, false]);
+    });
+  });
+
+  describe('#getCookie', () => {
+    const dCookieVal = 'abc123';
+    let ra;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+    });
+
+    it('Should get the cookie', () => {
+      spyOn(String.prototype, 'replace').and.returnValue(dCookieVal);
+
+      const tCookieVal = ra.getCookie();
+
+      expect(document.cookie.replace).toHaveBeenCalled();
+      expect(tCookieVal).toEqual(dCookieVal);
     });
   });
 });

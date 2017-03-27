@@ -107,6 +107,10 @@ class ReactiveAuth {
     window.addEventListener('expireAuth', this.expireHandler, false);
   }
 
+  private getCookie(): string | void {
+    return document.cookie.replace(this.cookieValRe, '$1');
+  }
+
   // TODO: getCookie(), isCookieValid(), register(), unregister()
 }
 
