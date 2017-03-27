@@ -44,7 +44,7 @@ class ReactiveAuth {
     }
 
     this.watchCookie = setInterval(() => {
-      const browserCookieVal: string | void = document.cookie.replace(this.cookieValRe, '$1') || undefined;
+      const browserCookieVal: string | void = this.getCookie() || undefined;
 
       if (!browserCookieVal && this.cookieVal) {
         // The cookie expired
@@ -89,6 +89,21 @@ class ReactiveAuth {
   }
 
   /**
+   * Grabs the current subscription that is active on the window.
+   *
+   * @method getSubscription
+   * @returns {any}            The current interval on window.
+   * @throws  {ReferenceError} If the subscription is not found.
+   */
+  public getSubscription(): any | never {
+    if (!this.watchCookie) {
+      throw new ReferenceError('ReactiveAuth: No subscriptions found on window. Call subscribe() to create one.');
+    }
+
+    return this.watchCookie;
+  }
+
+  /**
    * Creates the event listeners for the `updateAuth` and `expireAuth` events.
    *
    * @method createEventListeners
@@ -107,11 +122,18 @@ class ReactiveAuth {
     window.addEventListener('expireAuth', this.expireHandler, false);
   }
 
+  /**
+   * Gets the cookie string and isolates the cookie we want using regex replacement.
+   *
+   * @method getCookie
+   * @private
+   * @returns {string}  The isolated auth cookie.
+   */
   private getCookie(): string | void {
     return document.cookie.replace(this.cookieValRe, '$1');
   }
 
-  // TODO: getCookie(), isCookieValid(), register(), unregister()
+  // TODO: isCookieValid()
 }
 
 export default ReactiveAuth;

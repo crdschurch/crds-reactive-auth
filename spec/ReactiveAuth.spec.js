@@ -105,37 +105,6 @@ describe('ReactiveAuth', () => {
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), tFreq);
       expect(ra.watchCookie).toEqual(tInterval);
     });
-
-    xdescribe('Dispatching Events', () => {
-      const dName = 'sessionId';
-      const dValRe = new RegExp(`(?:(?:^|.*;\\s*)${dName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
-
-      let ra;
-
-      beforeEach(() => {
-        jasmine.clock().install();
-        ra = new ReactiveAuth();
-      });
-
-      afterEach(() => {
-        jasmine.clock().uninstall();
-        ra = undefined;
-      });
-
-      describe('updateAuth Event', () => {
-        it('Should not dispatch if the auth cookie isn\'t initially found', () => {
-          spyOn(window, 'dispatchEvent');
-
-          ra.subscribe();
-
-          fail();
-        });
-      });
-
-      describe('expireAuth Event', () => {
-
-      });
-    });
   });
 
   describe('#unsubscribe', () => {
@@ -172,6 +141,37 @@ describe('ReactiveAuth', () => {
       expect(removeEventListener.calls.count()).toEqual(2);
       expect(removeEventListener.calls.argsFor(0)).toEqual(['updateAuth']);
       expect(removeEventListener.calls.argsFor(1)).toEqual(['expireAuth']);
+    });
+  });
+
+  describe('#getSubscription', () => {
+    let ra;
+    let dWatchCookie;
+
+    beforeEach(() => {
+      ra = new ReactiveAuth();
+      dWatchCookie = setInterval(() => { }, 10000);
+
+      spyOn(window, 'setInterval').and.returnValue(dWatchCookie);
+    });
+
+    afterEach(() => {
+      ra = undefined;
+      clearInterval(dWatchCookie);
+      dWatchCookie = undefined;
+    });
+
+    it('Should get the current interval running on the window', () => {
+      ra.subscribe();
+      const tWatchCookie = ra.getSubscription();
+
+      expect(tWatchCookie).toEqual(dWatchCookie);
+    });
+
+    it('Should throw an error when subscription doesn\'t exist', () => {
+      expect(() => {
+        ra.getSubscription();
+      }).toThrowError(ReferenceError);
     });
   });
 

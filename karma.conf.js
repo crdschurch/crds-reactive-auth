@@ -16,7 +16,6 @@ module.exports = function testsConfig(config) {
 
     preprocessors: {
       './spec/spec_index.js': ['webpack'],
-      //'./spec/**/*.spec.ts': ['karma-typescript']
     },
 
     reporters: [
