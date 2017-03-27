@@ -2,7 +2,7 @@
 module.exports = {
   context: __dirname,
 
-  entry: './src/index.js',
+  entry: './src/index.ts',
 
   output: {
     path: __dirname,
@@ -18,7 +18,11 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader'
+        use: 'awesome-typescript-loader'
+      },
+      {
+        test: /\.js$/,
+        use: 'babel-loader'
       }
     ]
   }

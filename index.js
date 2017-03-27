@@ -73,146 +73,80 @@ module.exports =
 
 "use strict";
 
-
-var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
+Object.defineProperty(exports, "__esModule", { value: true });
 var ReactiveAuth = (function () {
-
-  /**
-   * Handles watching for changes with the auth cookie and dispatches the
-   *     appropriate events.
-   *
-   * @constructor
-   * @param {string} name - the name of the auth cookie that should be watched.
-   * @param {Function} defaultHandler - A default callback for the event
-   *     listeners. @default console.log
-   */
-
-  function ReactiveAuth(name, defaultHandler) {
-    _classCallCheck(this, ReactiveAuth);
-
-    // If name is falsy then set the cookieName to an empty string
-    // FIXME: should defualt values be hard coded here...?
-    var cookieName = name && typeof name === "string" ? name : "sessionId";
-
-    // This regex extracts the value of the cookie `cookieName`
-    this.cookieValRe = new RegExp("(?:(?:^|.*;\\s*)" + cookieName + "\\s*=\\s*([^;]*).*$)|^.*$", "");
-    this.cookieVal = undefined;
-    this.watchAuthCookie = undefined;
-
-    /* eslint-disable no-console */
-    // Sets up the default event handler for the update and expire events
-    this.updateHandler = defaultHandler && typeof defaultHandler === "function" ? defaultHandler : console.log;
-    this.expireHandler = defaultHandler && typeof defaultHandler === "function" ? defaultHandler : console.log;
-    /* eslint-enable no-console */
-  }
-
-  _createClass(ReactiveAuth, {
-    subscribe: {
-
-      /**
-       * Subscribes the client to events that are dispatched by this class.
-       *
-       * @param {number} freq - the frequency in which changes should be looked for.
-       *     @default 3000 (milliseconds)
-       * @param {Function} updateCallback - a specific function that should be called
-       *     when the `updateAuth` event is dispatched.
-       * @param {Function} expireCallback - a specific function that should be called
-       *     when the `expireAuth` event is dispatched.
-       * @returns {number} The ID of the interval that was set.
-       */
-
-      value: function subscribe(freq, updateCallback, expireCallback) {
-        var _this = this;
-
-        this.createEventListeners(updateCallback, expireCallback);
-
-        if (this.watchAuthCookie) {
-          clearInterval(this.watchAuthCookie);
-        }
-
-        var frequency = freq > 0 ? freq : 3000;
-
-        this.watchAuthCookie = setInterval(function () {
-          var browserCookieVal = document.cookie.replace(_this.cookieValRe, "$1");
-
-          if (!browserCookieVal && _this.cookieVal) {
-            // The cookie expired
-            window.dispatchEvent(new CustomEvent("expireAuth", {
-              detail: {
-                message: "Auth Cookie Expired",
-                oldValue: _this.cookieVal,
-                currentValue: browserCookieVal },
-              bubbles: true,
-              cancelable: true
-            }));
-
-            _this.cookieVal = browserCookieVal;
-          } else if (_this.cookieVal !== browserCookieVal) {
-            // The cookie was updated manually by the user
-            window.dispatchEvent(new CustomEvent("updateAuth", {
-              detail: {
-                message: "Updating Auth Cookie",
-                oldValue: _this.cookieVal,
-                currentValue: browserCookieVal },
-              bubbles: true,
-              cancelable: true
-            }));
-
-            _this.cookieVal = browserCookieVal;
-          }
-        }, frequency);
-
-        return this.watchAuthCookie;
-      }
-    },
-    unsubscribe: {
-
-      /**
-       * Unsubscribes the client from the events that this class dispatches
-       *     and stops the interval that was running.
-       */
-
-      value: function unsubscribe() {
-        clearInterval(this.watchAuthCookie);
-        this.watchAuthCookie = undefined;
-
-        window.removeEventListener("updateAuth");
-        window.removeEventListener("expireAuth");
-      }
-    },
-    createEventListeners: {
-
-      /**
-       * Creates the event listeners for the `updateAuth` and `expireAuth` events
-       *     and attaches them to the DOM.
-       * @private
-       * @param {Function} updateCb - a specific function that should be called
-       *     when the `updateAuth` event is dispatched.
-       * @param {Function} expireCb - a specific function that should be called
-       *     when the `expireAuth` event is dispatched.
-       */
-
-      value: function createEventListeners(updateCb, expireCb) {
-        if (updateCb && typeof updateCb === "function") {
-          this.updateHandler = updateCb;
-        }
-        if (expireCb && typeof expireCb === "function") {
-          this.expireHandler = expireCb;
-        }
-
-        window.addEventListener("updateAuth", this.updateHandler, false);
-        window.addEventListener("expireAuth", this.expireHandler, false);
-      }
+    function ReactiveAuth(name, defaultHandler) {
+        if (name === void 0) { name = 'sessionId'; }
+        if (defaultHandler === void 0) { defaultHandler = console.log; }
+        this.cookieValRe = new RegExp("(?:(?:^|.*;\\s*)" + name + "\\s*=\\s*([^;]*).*$)|^.*$", '');
+        this.cookieVal = this.getCookie();
+        this.updateHandler = defaultHandler;
+        this.expireHandler = defaultHandler;
     }
-  });
+    ReactiveAuth.prototype.subscribe = function (frequency, updateCb, expireCb) {
+        var _this = this;
+        if (frequency === void 0) { frequency = 3000; }
+        this.createEventListeners(updateCb, expireCb);
+        if (this.watchCookie) {
+            clearInterval(this.watchCookie);
+        }
+        this.watchCookie = setInterval(function () {
+            var currentBrowserCookieVal = _this.getCookie();
+            if (!currentBrowserCookieVal && _this.cookieVal) {
+                window.dispatchEvent(new CustomEvent('expireAuth', {
+                    detail: {
+                        message: 'Auth Cookie Expired',
+                        oldValue: _this.cookieVal,
+                        currentValue: currentBrowserCookieVal
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }
+            else if (_this.cookieVal !== currentBrowserCookieVal) {
+                window.dispatchEvent(new CustomEvent('updateAuth', {
+                    detail: {
+                        message: 'Auth Cookie Updated',
+                        oldValue: _this.cookieVal,
+                        currentValue: currentBrowserCookieVal
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }
+            _this.cookieVal = currentBrowserCookieVal;
+        }, frequency);
+        return this.watchCookie;
+    };
+    ReactiveAuth.prototype.unsubscribe = function () {
+        clearInterval(this.watchCookie);
+        this.watchCookie = null;
+        window.removeEventListener('updateAuth');
+        window.removeEventListener('expireAuth');
+    };
+    ReactiveAuth.prototype.getSubscription = function () {
+        if (!this.watchCookie) {
+            throw new ReferenceError('ReactiveAuth#getSubscription(): No subscriptions found on window. Call subscribe() to create one.');
+        }
+        return this.watchCookie;
+    };
+    ReactiveAuth.prototype.createEventListeners = function (updateCb, expireCb) {
+        if (updateCb) {
+            this.updateHandler = updateCb;
+        }
+        if (expireCb) {
+            this.expireHandler = expireCb;
+        }
+        window.addEventListener('updateAuth', this.updateHandler, false);
+        window.addEventListener('expireAuth', this.expireHandler, false);
+    };
+    ReactiveAuth.prototype.getCookie = function () {
+        return document.cookie.replace(this.cookieValRe, '$1') || undefined;
+    };
+    return ReactiveAuth;
+}());
+exports.default = ReactiveAuth;
 
-  return ReactiveAuth;
-})();
-
-module.exports = ReactiveAuth;
 
 /***/ }),
 /* 1 */
@@ -220,16 +154,11 @@ module.exports = ReactiveAuth;
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+var ReactiveAuth_1 = __webpack_require__(0);
+exports.default = ReactiveAuth_1.default;
+exports.ReactiveAuth = ReactiveAuth_1.default;
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var ReactiveAuth = _interopRequire(__webpack_require__(0));
-
-exports["default"] = ReactiveAuth;
 
 /***/ })
 /******/ ]);
