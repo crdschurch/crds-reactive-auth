@@ -40,9 +40,6 @@ class ReactiveAuth {
     this.createEventListeners(updateCb, expireCb);
 
     if (this.watchCookie) { clearInterval(this.watchCookie); }
-    if (frequency < 0) {
-      throw `ReductiveAuth#subscribe: frequency must be greater than 0\n\tfrequency: ${frequency}`;
-    }
 
     this.watchCookie = setInterval(() => {
       const currentBrowserCookieVal: string | void = this.getCookie();
@@ -98,7 +95,7 @@ class ReactiveAuth {
    */
   public getSubscription(): any | never {
     if (!this.watchCookie) {
-      throw new ReferenceError('ReactiveAuth: No subscriptions found on window. Call subscribe() to create one.');
+      throw new ReferenceError('ReactiveAuth#getSubscription(): No subscriptions found on window. Call subscribe() to create one.');
     }
 
     return this.watchCookie;

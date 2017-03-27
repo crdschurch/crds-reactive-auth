@@ -241,7 +241,6 @@ describe('ReactiveAuth', () => {
     });
   });
 
-
   describe('Update Auth Events', () => {
     const dCookieVal0 = undefined;
     const dCookieVal1 = 'abc123';
