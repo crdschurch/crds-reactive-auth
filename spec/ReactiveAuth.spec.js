@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import ReactiveAuth from '../src/ReactiveAuth';
+import ReactiveAuth from '../src/ReactiveAuth.ts';
 
 describe('ReactiveAuth', () => {
   describe('#constructor', () => {
@@ -7,7 +7,7 @@ describe('ReactiveAuth', () => {
     const dName = 'sessionId';
     const dValRe = new RegExp(`(?:(?:^|.*;\\s*)${dName}\\s*=\\s*([^;]*).*$)|^.*$`, '');
     const dCookieVal = undefined;
-    const dWatchCookie = undefined;
+    const dSubscription = undefined;
     // eslint-disable-next-line no-console
     const dHandler = console.log;
 
@@ -16,7 +16,7 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(dValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchCookie).toBe(dWatchCookie);
+      expect(ra.subscription).toBe(dSubscription);
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
@@ -29,7 +29,7 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(tValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchCookie).toBe(dWatchCookie);
+      expect(ra.subscription).toBe(dSubscription);
       expect(ra.updateHandler).toBe(dHandler);
       expect(ra.expireHandler).toBe(dHandler);
     });
@@ -43,7 +43,7 @@ describe('ReactiveAuth', () => {
 
       expect(ra.cookieValRe.toString()).toBe(tValRe.toString());
       expect(ra.cookieVal).toBe(dCookieVal);
-      expect(ra.watchCookie).toBe(dWatchCookie);
+      expect(ra.subscription).toBe(dSubscription);
       expect(ra.updateHandler).toBe(tHandler);
       expect(ra.expireHandler).toBe(tHandler);
     });
@@ -86,7 +86,7 @@ describe('ReactiveAuth', () => {
       expect(ra.createEventListeners).toHaveBeenCalledWith(dUpdateCb, dExpireCb);
       expect(setInterval).toHaveBeenCalled();
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), dFreq);
-      expect(ra.watchCookie).toEqual(tInterval);
+      expect(ra.subscription).toEqual(tInterval);
     });
 
     it('Should accept and use valid params', () => {
@@ -104,34 +104,37 @@ describe('ReactiveAuth', () => {
       expect(ra.createEventListeners).toHaveBeenCalledWith(tUpdateCb, tExpireCb);
       expect(setInterval).toHaveBeenCalled();
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), tFreq);
-      expect(ra.watchCookie).toEqual(tInterval);
+      expect(ra.subscription).toEqual(tInterval);
     });
   });
 
   describe('#unsubscribe', () => {
     let ra;
-    let dWatchCookie;
+    let dSubscription;
 
     beforeEach(() => {
       ra = new ReactiveAuth();
-      dWatchCookie = setInterval(() => { }, 3000);
-      ra.watchCookie = dWatchCookie;
+      dSubscription = setInterval(() => { }, 3000);
+      ra.subscription = dSubscription;
+
+      spyOn(ra, 'getSubscription').and.callThrough();
     });
 
     afterEach(() => {
       ra = undefined;
-      clearInterval(dWatchCookie);
-      dWatchCookie = undefined;
+      clearInterval(dSubscription);
+      dSubscription = undefined;
     });
 
-    it('Should stop watching the auth cookie and reset the watchCookie variable', () => {
+    it('Should stop watching the auth cookie and reset the subscription variable', () => {
       spyOn(window, 'clearInterval');
 
       ra.unsubscribe();
 
       expect(clearInterval).toHaveBeenCalled();
-      expect(clearInterval).toHaveBeenCalledWith(dWatchCookie);
-      expect(ra.watchCookie).toEqual(null);
+      expect(clearInterval).toHaveBeenCalledWith(dSubscription);
+      expect(ra.getSubscription).toHaveBeenCalled();
+      expect(ra.subscription).toBeUndefined();
     });
 
     it('Should remove the event listeners from the window object', () => {
@@ -147,26 +150,26 @@ describe('ReactiveAuth', () => {
 
   describe('#getSubscription', () => {
     let ra;
-    let dWatchCookie;
+    let dSubscription;
 
     beforeEach(() => {
       ra = new ReactiveAuth();
-      dWatchCookie = setInterval(() => { }, 10000);
+      dSubscription = setInterval(() => { }, 10000);
 
-      spyOn(window, 'setInterval').and.returnValue(dWatchCookie);
+      spyOn(window, 'setInterval').and.returnValue(dSubscription);
     });
 
     afterEach(() => {
       ra = undefined;
-      clearInterval(dWatchCookie);
-      dWatchCookie = undefined;
+      clearInterval(dSubscription);
+      dSubscription = undefined;
     });
 
     it('Should get the current interval running on the window', () => {
       ra.subscribe();
-      const tWatchCookie = ra.getSubscription();
+      const tSubscription = ra.getSubscription();
 
-      expect(tWatchCookie).toEqual(dWatchCookie);
+      expect(tSubscription).toEqual(dSubscription);
     });
 
     it('Should throw an error when subscription doesn\'t exist', () => {

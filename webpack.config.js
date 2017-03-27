@@ -15,15 +15,12 @@ module.exports = {
   },
 
   module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: 'awesome-typescript-loader'
-      },
-      {
-        test: /\.js$/,
-        use: 'babel-loader'
-      }
-    ]
+    rules: [{
+      test: /\.ts$/,
+      use: 'awesome-typescript-loader'
+    }, {
+      test: /\.js$/,
+      use: 'babel-loader'
+    }]
   }
 };

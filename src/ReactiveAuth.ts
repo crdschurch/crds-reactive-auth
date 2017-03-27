@@ -4,9 +4,10 @@ type anyFunc = (...args: any[]) => void;
 class ReactiveAuth {
   public cookieVal: string | void;
   public cookieValRe: RegExp;
-  public watchCookie: any | void;
   public updateHandler: anyFunc;
   public expireHandler: anyFunc;
+
+  private subscription: number | void;
 
   /**
    * Handles watching for changes with the auth cookie and dispatches the appropriate events.
@@ -36,12 +37,12 @@ class ReactiveAuth {
    *
    * @returns {any}                    The object that identifies the interval that was started.
    */
-  public subscribe(frequency = 3000, updateCb?: anyFunc, expireCb?: anyFunc): any {
+  public subscribe(frequency: number = 3000, updateCb?: anyFunc, expireCb?: anyFunc): any {
     this.createEventListeners(updateCb, expireCb);
 
-    if (this.watchCookie) { clearInterval(this.watchCookie); }
+    if (this.subscription) { clearInterval(this.subscription); }
 
-    this.watchCookie = setInterval(() => {
+    this.subscription = setInterval(() => {
       const currentBrowserCookieVal: string | void = this.getCookie();
 
       if (!currentBrowserCookieVal && this.cookieVal) {
@@ -70,7 +71,7 @@ class ReactiveAuth {
       this.cookieVal = currentBrowserCookieVal;
     }, frequency);
 
-    return this.watchCookie;
+    return this.subscription;
   }
 
   /**
@@ -79,8 +80,8 @@ class ReactiveAuth {
    * @method unsubscribe
    */
   public unsubscribe(): void {
-    clearInterval(this.watchCookie);
-    this.watchCookie = null;
+    clearInterval(this.getSubscription());
+    this.subscription = undefined;
 
     window.removeEventListener('updateAuth');
     window.removeEventListener('expireAuth');
@@ -93,12 +94,12 @@ class ReactiveAuth {
    * @returns {any}            The current interval on window.
    * @throws  {ReferenceError} If the subscription is not found.
    */
-  public getSubscription(): any | never {
-    if (!this.watchCookie) {
+  public getSubscription(): number | never {
+    if (!this.subscription) {
       throw new ReferenceError('ReactiveAuth#getSubscription(): No subscriptions found on window. Call subscribe() to create one.');
     }
 
-    return this.watchCookie;
+    return this.subscription;
   }
 
   /**
