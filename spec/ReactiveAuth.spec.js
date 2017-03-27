@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import ReactiveAuth from '../src/ReactiveAuth';
 
 describe('ReactiveAuth', () => {
@@ -47,12 +48,14 @@ describe('ReactiveAuth', () => {
       expect(ra.expireHandler).toBe(tHandler);
     });
 
-    xit('Should call the getCookie method', () => {
+    it('Should call the getCookie method', () => {
+      const tCookieVal = 'abc123';
+      spyOn(ReactiveAuth.prototype, 'getCookie').and.returnValue(tCookieVal);
+
       const ra = new ReactiveAuth();
 
-      spyOn(ra, 'getCookie');
-
       expect(ra.getCookie).toHaveBeenCalled();
+      expect(ra.cookieVal).toEqual(tCookieVal);
     });
   });
 
@@ -81,8 +84,6 @@ describe('ReactiveAuth', () => {
 
       expect(ra.createEventListeners).toHaveBeenCalled();
       expect(ra.createEventListeners).toHaveBeenCalledWith(dUpdateCb, dExpireCb);
-      // TODO: test the interval functionality separately
-      /* expect(ra.cookieVal).toBe(undefined); */
       expect(setInterval).toHaveBeenCalled();
       expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), dFreq);
       expect(ra.watchCookie).toEqual(tInterval);
@@ -124,7 +125,7 @@ describe('ReactiveAuth', () => {
     });
 
     it('Should stop watching the auth cookie and reset the watchCookie variable', () => {
-      spyOn(window, 'clearInterval').and.callThrough();
+      spyOn(window, 'clearInterval');
 
       ra.unsubscribe();
 
@@ -182,6 +183,8 @@ describe('ReactiveAuth', () => {
     let ra;
 
     beforeEach(() => {
+      spyOn(window, 'addEventListener');
+
       ra = new ReactiveAuth();
       ra.updateHandler = dUpdateCb;
       ra.expireHandler = dExpireCb;
@@ -192,8 +195,6 @@ describe('ReactiveAuth', () => {
     });
 
     it('Should work properly when passed no params', () => {
-      spyOn(window, 'addEventListener');
-
       ra.createEventListeners();
 
       expect(addEventListener.calls.count()).toEqual(2);
@@ -204,8 +205,6 @@ describe('ReactiveAuth', () => {
     it('Should accept and use valid params', () => {
       const tUpdateCb = () => { };
       const tExpireCb = () => { };
-
-      spyOn(window, 'addEventListener');
 
       ra.createEventListeners(tUpdateCb, tExpireCb);
 
@@ -230,6 +229,163 @@ describe('ReactiveAuth', () => {
 
       expect(document.cookie.replace).toHaveBeenCalled();
       expect(tCookieVal).toEqual(dCookieVal);
+    });
+
+    it('Should return undefined if no cookie found', () => {
+      spyOn(String.prototype, 'replace').and.returnValue('');
+
+      const tCookieVal = ra.getCookie();
+
+      expect(document.cookie.replace).toHaveBeenCalled();
+      expect(tCookieVal).toBeUndefined();
+    });
+  });
+
+
+  describe('Update Auth Events', () => {
+    const dCookieVal0 = undefined;
+    const dCookieVal1 = 'abc123';
+    const dCookieVal2 = '123abc';
+    const dFreq = 3000;
+    const dUpdatedTitle = 'updateAuth';
+    const dUpdatedMessage = 'Auth Cookie Updated';
+
+    let ra;
+
+    beforeEach(() => {
+      spyOn(window, 'CustomEvent');
+      spyOn(window, 'dispatchEvent');
+
+      ra = new ReactiveAuth();
+
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+      jasmine.clock().uninstall();
+    });
+
+    it('Should dispatch when the cookie is added', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal1);
+
+      ra.cookieVal = dCookieVal0;
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).toHaveBeenCalled();
+      expect(CustomEvent).toHaveBeenCalledWith(dUpdatedTitle, jasmine.objectContaining({
+        detail: {
+          message: dUpdatedMessage,
+          oldValue: dCookieVal0,
+          currentValue: dCookieVal1
+        }
+      }));
+    });
+
+    it('Should dispatch when the cookie changes', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal2);
+
+      ra.cookieVal = dCookieVal1;
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).toHaveBeenCalled();
+      expect(CustomEvent).toHaveBeenCalledWith(dUpdatedTitle, jasmine.objectContaining({
+        detail: {
+          message: dUpdatedMessage,
+          oldValue: dCookieVal1,
+          currentValue: dCookieVal2
+        }
+      }));
+    });
+
+    it('Shouldn\'t dispatch if cookie isn\'t initially found', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal0);
+
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).not.toHaveBeenCalled();
+      expect(CustomEvent).not.toHaveBeenCalled();
+    });
+
+    it('Shouldn\'t dispatch if the cookie hasn\'t changed', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal1);
+
+      ra.cookieVal = dCookieVal1;
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).not.toHaveBeenCalled();
+      expect(CustomEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Expire Auth Events', () => {
+    const dCookieVal0 = undefined;
+    const dCookieVal1 = 'abc123';
+    const dFreq = 3000;
+    const dExpiredTitle = 'expireAuth';
+    const dExpiredMessage = 'Auth Cookie Expired';
+
+    let ra;
+
+    beforeEach(() => {
+      spyOn(window, 'CustomEvent');
+      spyOn(window, 'dispatchEvent');
+
+      ra = new ReactiveAuth();
+
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      ra = undefined;
+      jasmine.clock().uninstall();
+    });
+
+    it('Should dispatch when the cookie is removed', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal0);
+
+      ra.cookieVal = dCookieVal1;
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).toHaveBeenCalled();
+      expect(CustomEvent).toHaveBeenCalledWith(dExpiredTitle, jasmine.objectContaining({
+        detail: {
+          message: dExpiredMessage,
+          oldValue: dCookieVal1,
+          currentValue: dCookieVal0
+        }
+      }));
+    });
+
+    it('Shouldn\'t dispatch if the cookie already didn\'t exist', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal0);
+
+      ra.cookieVal = dCookieVal0;
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      expect(dispatchEvent).not.toHaveBeenCalled();
+      expect(CustomEvent).not.toHaveBeenCalled();
+    });
+
+    it('Shouldn\'t dispatch if the cookie exists', () => {
+      spyOn(ra, 'getCookie').and.returnValue(dCookieVal1);
+
+      ra.subscribe(dFreq);
+      jasmine.clock().tick(dFreq + 1);
+
+      // This should dispatch the 'Update Auth Cookie' event
+      expect(dispatchEvent.calls.count()).toEqual(1);
+      expect(CustomEvent.calls.count()).toEqual(1);
+      expect(CustomEvent.calls.argsFor(0)).not.toEqual([
+        dExpiredTitle,
+        jasmine.any(Object)
+      ]);
     });
   });
 });

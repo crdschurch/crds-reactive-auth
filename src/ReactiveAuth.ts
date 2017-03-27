@@ -1,5 +1,5 @@
 
-type anyFunc = (...args: any[]) => void
+type anyFunc = (...args: any[]) => void;
 
 class ReactiveAuth {
   public cookieVal: string | void;
@@ -17,6 +17,7 @@ class ReactiveAuth {
    */
   constructor(name: string = 'sessionId', defaultHandler: anyFunc = console.log) {
     this.cookieValRe = new RegExp(`(?:(?:^|.*;\\s*)${name}\\s*=\\s*([^;]*).*$)|^.*$`, '');
+    this.cookieVal = this.getCookie();
     this.updateHandler = defaultHandler;
     this.expireHandler = defaultHandler;
   }
@@ -44,32 +45,32 @@ class ReactiveAuth {
     }
 
     this.watchCookie = setInterval(() => {
-      const browserCookieVal: string | void = this.getCookie() || undefined;
+      const currentBrowserCookieVal: string | void = this.getCookie();
 
-      if (!browserCookieVal && this.cookieVal) {
+      if (!currentBrowserCookieVal && this.cookieVal) {
         // The cookie expired
         window.dispatchEvent(new CustomEvent('expireAuth', {
           detail: {
             message: 'Auth Cookie Expired',
             oldValue: this.cookieVal,
-            currentValue: browserCookieVal
+            currentValue: currentBrowserCookieVal
           },
           bubbles: true,
           cancelable: true
         }));
-      } else if (this.cookieVal !== browserCookieVal) {
+      } else if (this.cookieVal !== currentBrowserCookieVal) {
         window.dispatchEvent(new CustomEvent('updateAuth', {
           detail: {
             message: 'Auth Cookie Updated',
             oldValue: this.cookieVal,
-            currentValue: browserCookieVal
+            currentValue: currentBrowserCookieVal
           },
           bubbles: true,
           cancelable: true
         }));
       }
 
-      this.cookieVal = browserCookieVal;
+      this.cookieVal = currentBrowserCookieVal;
     }, frequency);
 
     return this.watchCookie;
@@ -130,10 +131,8 @@ class ReactiveAuth {
    * @returns {string}  The isolated auth cookie.
    */
   private getCookie(): string | void {
-    return document.cookie.replace(this.cookieValRe, '$1');
+    return document.cookie.replace(this.cookieValRe, '$1') || undefined;
   }
-
-  // TODO: isCookieValid()
 }
 
 export default ReactiveAuth;
