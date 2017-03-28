@@ -18,7 +18,7 @@
     "authentication"
   ],
   "author": "",
-  "license": "BSD-2-Clause",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/crdschurch/crds-reactive-auth/issues"
   },
