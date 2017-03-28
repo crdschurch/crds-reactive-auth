@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es5",
+    "pretty": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "importHelpers": true,
+    "noEmitHelpers": true,
+    "removeComments": true
+  }
+}

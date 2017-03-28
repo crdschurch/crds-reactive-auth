@@ -1,0 +1,47 @@
+{
+  "name": "crds-reactive-auth",
+  "version": "0.0.1",
+  "description": "Library for watching crossroads authentication token",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "webpack --progress --colors",
+    "start": "karma start --single-run false",
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crdschurch/crds-reactive-auth.git"
+  },
+  "keywords":[
+    "crossroads",
+    "authentication"
+  ],
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/crdschurch/crds-reactive-auth/issues"
+  },
+  "homepage": "https://github.com/crdschurch/crds-reactive-auth#readme",
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.1.2",
+    "babel-core": "^4.7.16",
+    "babel-loader": "^4.3.0",
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.5.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-mocha-reporter": "^2.2.3",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-typescript": "^2.1.7",
+    "karma-webpack": "^2.0.3",
+    "phantomjs": "^2.1.7",
+    "ts-node": "^3.0.2",
+    "tslint": "^4.5.1",
+    "tslint-config-unional": "^0.7.0",
+    "typescript": "^2.2.1",
+    "webpack": "^2.3.1"
+  }
+}
