@@ -7,7 +7,7 @@ class ReactiveAuth {
   public updateHandler: anyFunc;
   public expireHandler: anyFunc;
 
-  private subscription: number | void;
+  private subscription: any;
 
   /**
    * Handles watching for changes with the auth cookie and dispatches the appropriate events.
