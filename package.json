@@ -1,6 +1,6 @@
 {
   "name": "crds-reactive-auth",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Library for watching crossroads authentication token",
   "private": true,
   "main": "index.js",
