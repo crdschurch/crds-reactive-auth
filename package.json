@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Library for watching crossroads authentication token",
   "private": true,
-  "main": "src/index.ts",
+  "main": "index.js",
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "karma start --single-run false",
