@@ -143,8 +143,8 @@ describe('ReactiveAuth', () => {
       ra.unsubscribe();
 
       expect(removeEventListener.calls.count()).toEqual(2);
-      expect(removeEventListener.calls.argsFor(0)).toEqual(['updateAuth']);
-      expect(removeEventListener.calls.argsFor(1)).toEqual(['expireAuth']);
+      expect(removeEventListener.calls.argsFor(0)).toEqual(['updateAuth', jasmine.any(Function)]);
+      expect(removeEventListener.calls.argsFor(1)).toEqual(['expireAuth', jasmine.any(Function)]);
     });
   });
 

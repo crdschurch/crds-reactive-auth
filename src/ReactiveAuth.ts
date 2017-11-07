@@ -83,8 +83,8 @@ class ReactiveAuth {
     clearInterval(this.getSubscription());
     this.subscription = undefined;
 
-    window.removeEventListener('updateAuth');
-    window.removeEventListener('expireAuth');
+    window.removeEventListener('updateAuth', this.updateHandler);
+    window.removeEventListener('expireAuth', this.expireHandler);
   }
 
   /**
